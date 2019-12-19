@@ -343,6 +343,22 @@
 			<br/>
 		</div>
 	</div>
-	<input id="xml_def" type="hidden" value=""/>
+	<div id="message"></div>
+	<script>
+		window.onload = function() {
+			var messageElement = document.getElementById('message');
+
+			function receiveMessage(e) {
+				if (e.origin !== "https://cloud3.intelex.com/") {
+					return;
+				}
+
+				messageElement.innerHTML = "message received - " + e.data;
+			}
+
+			window.addEventListener('message', receiveMessage);
+
+		}
+	</script>
 </body>
 </html>
