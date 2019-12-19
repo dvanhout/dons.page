@@ -303,7 +303,7 @@
 		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
 	</script>
 
-<script>
+<script type="text/javascript">
 		window.onload = function() {
 			var messageElement = document.getElementById('message');
 			function receiveMessage(e) {
@@ -312,7 +312,7 @@
 				}
 				messageElement.innerHTML = "message received - " + e.data;
 			}
-			window.addEventListener('message', receiveMessage);
+			window.addEventListener('message', receiveMessage, { passive: false });
 		}
 	</script>
 </head>
@@ -356,6 +356,6 @@
 			<br/>
 		</div>
 	</div>
-	<div id="message"></div>
+	<div id="message">Initial Message Text</div>
 </body>
 </html>
