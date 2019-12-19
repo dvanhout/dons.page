@@ -302,6 +302,19 @@
 
 		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
 	</script>
+
+<script>
+		window.onload = function() {
+			var messageElement = document.getElementById('message');
+			function receiveMessage(e) {
+				if (e.origin !== "https://cloud3.intelex.com/") {
+					return;
+				}
+				messageElement.innerHTML = "message received - " + e.data;
+			}
+			window.addEventListener('message', receiveMessage);
+		}
+	</script>
 </head>
 <body onload="createEditor('config/diagrameditor.xml');">
 	<div id="page">
@@ -344,21 +357,5 @@
 		</div>
 	</div>
 	<div id="message"></div>
-	<script>
-		window.onload = function() {
-			var messageElement = document.getElementById('message');
-
-			function receiveMessage(e) {
-				if (e.origin !== "https://cloud3.intelex.com/") {
-					return;
-				}
-
-				messageElement.innerHTML = "message received - " + e.data;
-			}
-
-			window.addEventListener('message', receiveMessage);
-
-		}
-	</script>
 </body>
 </html>
