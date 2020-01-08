@@ -305,6 +305,37 @@
 		}
 
 		window.onbeforeunload = function() { return mxResources.get('changesLost'); };
+
+
+	// ----------------- DV added here down ----------- 
+	// function that gets called when message is received
+	function receiveMessage(e) {
+		// element used to display received message - can remove
+		var messageElement = document.getElementById('msg');
+		
+		// source checkbox - will not get updated xml definition until this box is checked 
+		var sourceInput = document.getElementById('source');
+		
+		// initialize variable for return message
+		var xmlText = "";
+		
+		// gatekeeper - make sure sender is correct - i.e. fr Intelex
+		if (e.origin !== "https://cloud3.intelex.com") {
+			return;  // <-- wrong source, return
+		}  // source checks out
+		messageElement.innerHTML = "message received - " + e.data;
+		
+		// toggle input checkbox to refresh xml
+		sourceInput.click();
+		sourceInput.click();
+		
+		// get refreshed xml to send back
+		xmlText = document.getElementById('xml').value;
+
+		// send xml back when message is received
+		e.source.postMessage(xmlText, e.data.url);
+	}
+	window.addEventListener('message', receiveMessage, { passive: false });
 	</script>
 
 </head>
@@ -348,17 +379,6 @@
 			<br/>
 		</div>
 	</div>
-	<div id="message">Initial Message Text</div>
+	<div id="msg">Initial Message Text</div>
 </body>
-<script>
-	// added function DV
-	var messageElement = document.getElementById('message');
-	function receiveMessage(e) {
-		if (e.origin !== "https://cloud3.intelex.com") {
-			return;
-		}
-		messageElement.innerHTML = "message received - " + e.data;
-	}
-	window.addEventListener('message', receiveMessage, { passive: false });
-</script>
 </html>
