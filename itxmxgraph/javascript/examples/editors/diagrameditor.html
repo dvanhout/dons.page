@@ -278,7 +278,7 @@
 			mxUtils.linkAction(node, 'Fit', editor, 'fit');
 
 
-			// INTELEX INTEGRATION CODE FROM HERE -------------->
+			// INTELEX INTEGRATION CODE FROM HERE ---------------------------------------------->
 
 			const ITX_URL = "https://cloud3.intelex.com";  // <--- change to Intelex Server base URL
 
@@ -290,7 +290,17 @@
 				return xml
 			}
 
-			function enableViewMode() {
+			function makeGraph(xmlString) {
+				// creates a graph from the submitted xml
+				
+				var doc = mxUtils.parseXml(xmlString);
+
+				var codec = new mxCodec(doc);
+				
+				codec.decode(doc.documentElement, editor.graph.getModel());
+			}
+
+			function enableViewMode(err) {
 				// hides editor, show's uneditable view of the diagram  
 				// viewer iframe
 				var viewer = document.getElementById('viewer');
@@ -299,22 +309,10 @@
 				var editorDiv  = document.getElementById('page');
 
 				// show viewer iframe hide editor
-				mxUtils.show(editor.graph, viewer.contentWindow.document);
+				if (!err) { mxUtils.show(editor.graph, viewer.contentWindow.document, 10, 10); }
 				editorDiv.style.display = 'none';
 				viewer.height = '100%';
 				viewer.width = '100%';
-			}
-
-			function makeGraph(xmlString, viewMode) {
-				// creates a graph from the submitted xml
-				var doc = mxUtils.parseXml(xmlString);
-				var codec = new mxCodec(doc);
-				
-				codec.decode(doc.documentElement, editor.graph.getModel());
-
-				if (viewMode.toLowerCase() === 'view') {
-					enableViewMode();
-				}
 			}
 
 			function receiveMessage(e) {
@@ -323,13 +321,11 @@
 				if (e.origin !== ITX_URL) { 
 					return; 
 				} else { 
-					if (e.data.requestType === 'makeGraph') {
+				  // create graph
+					makeGraph(e.data.itxXML);
 
-						// create graph
-						makeGraph(e.data.itxXML, e.data.viewMode);
-
-						// two way communication - send changes back
-						if (e.data.viewMode.toLowerCase() === 'edit' || e.data.viewMode.toLowerCase() === 'create') {
+					// two way communication - send changes back
+					if (e.data.viewMode.toLowerCase() === 'edit' || e.data.viewMode.toLowerCase() === 'create') {
 						editor.graph.model.addListener(mxEvent.CHANGE, function(sender, evt) {
 							var changes = evt.getProperty('edit').changes;
 							var nodes = [];
@@ -339,7 +335,13 @@
 								nodes.push(codec.encode(changes[i]));
 							}
 							e.source.postMessage( {mxXML: getGraphXML()}, e.data.originUrl );
-							});
+						});
+					} else if (e.data.viewMode.toLowerCase() === 'view') {
+						// check xml exists
+						if (e.data.itxXML === '') {
+							enableViewMode(true);
+						} else {
+							enableViewMode(false);
 						}
 					}
 				}							
@@ -347,9 +349,8 @@
 
 			// event listener for incoming message
 			window.addEventListener('message', receiveMessage, { passive: false });
-
 		}
-		// <----------------------------------------- TO HERE
+		// <------------------------------------------------------------------- TO HERE
 	</script>
 </head>
 <body onload="createEditor('config/diagrameditor.xml');">
@@ -390,6 +391,8 @@
 		</div>
 	</div>
 	<!-- Viewer -->
-	<iframe id="viewer" frameBorder="0"></iframe>
+	<div id="iframe-container">
+		<iframe id="viewer" frameBorder="0"></iframe>
+	</div>
 </body>
 </html>

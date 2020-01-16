@@ -1,0 +1,111 @@
+<ix:DetailPage>
+  <ix:DetailSection Title="Fields" meta:resourcekey="DetailSection0" ResourceKey="DetailSection0">
+    <ix:FieldArea span="true">
+<ix:Field For="Name"/>
+<ix:Field For="XMLDefinition"/>
+<ix:Field For="mxEditorURL"/>
+    </ix:FieldArea>
+  </ix:DetailSection>
+  <ix:DetailSection Title="mxGraph" meta:resourcekey="DetailSection1" ResourceKey="DetailSection1">
+<div id="ITXmxGraphViewer" style="height:980px;"/>
+  </ix:DetailSection>
+</ix:DetailPage>
+<ix:JavaScript Scope="OnReady">
+  <script type="text/javascript">
+// insert the viewer iframe html code into the page
+    var editorURL = document.createElement('a');
+    editorURL.href = Intelex.DetailPage.getField('mxEditorURL').value;
+     
+    // add iframe code to DOM
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('id', 'mxGraphViewer');
+    iframe.setAttribute('src', editorURL.href);
+    iframe.setAttribute('height', '100%');
+    iframe.setAttribute('width', '100%');
+    iframe.setAttribute('style', 'position:absolute;left:auto;');
+    $("#ITXmxGraphViewer").append(iframe);
+
+    // set config data
+    var conf = {mxURL: editorURL.href};
+    
+    var pageUrlSegments = location.pathname.replace('/^//','').split('/')
+    // create-mode check
+    if (pageUrlSegments[pageUrlSegments.length - 1] === 'Create') {
+      conf.objUID = null;
+      conf.viewMode = 'Create';
+    // view, edit mode
+    } else {
+      conf.objUID = pageUrlSegments[pageUrlSegments.length - 1];
+      conf.viewMode = pageUrlSegments[pageUrlSegments.length - 2];
+    }
+    
+    // do not let user spoil xml
+    if (conf.viewMode === 'Create' || conf.viewMode === 'Edit') {
+      $('#XMLDefinition').prop('readonly', true);
+    }
+    
+    function sendToFrame(e) {
+      // sends a message to the iframe
+      e.preventDefault();
+          
+      // get reference to the iframe window
+      var receiver = document.getElementById('mxGraphViewer').contentWindow;
+            
+      // send message to iframe along with source url
+      receiver.postMessage({
+       	viewMode: conf.viewMode,  // for server security check
+        originUrl: window.location.href,
+      	itxXML: Intelex.DetailPage.getField('XMLDefinition').value  // the xml code from the Intelex field
+      }, conf.mxURL);   
+    }  
+     
+     function receiveXML(e) {
+       // TODO: Currently the xml is just being loaded into the textbox - IF AM wants to pursue version control -  make this an ajax post to the api instead of loading the directly into the field
+       // loads the xml definition only into the xml field
+       e.preventDefault();
+       if (e.origin !== editorURL.origin) {  // <--change the origin here
+         console.log('ERROR: Invalid sender');
+         return;
+       } else {
+         // change the text of the input field to the new xml definition
+         $('#XMLDefinition').val(e.data.mxXML);
+         $('#XMLDefinition').change();       
+       }
+     }
+     
+     // onload event to send xml to the iframe
+     window.onload = sendToFrame;
+     
+    // the message handler from the iframe to load the xml definition into the field
+    if (window.addEventListener) {  // good browsers
+      window.addEventListener('message', receiveXML, { passive: false });
+    } else {
+      if (window.attachEvent) {  // IE
+        window.attachEvent("onmessage", receiveXML)
+      }
+    }
+  </script>
+</ix:JavaScript>
+<style>
+#ITXmxGraphViewer {
+  overflow: hidden;
+  /* Calculated from the aspect ration of the content (in case of 16:9 it is 9/16= 0.5625) */
+  padding-top: 56.25%;
+  position: relative;
+}
+
+#ITXmxGraphViewer iframe {
+   border: 0;
+   height: 100%;
+   left: 0;
+   position: absolute;
+   top: 0;
+   width: 100%;
+}
+
+/*   Hide the xml text input by uncommenting this code
+#fld_XMLDefinition{
+  visibility: hidden;
+}
+*/
+</style>
