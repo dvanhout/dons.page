@@ -1,19 +1,21 @@
-<ix:DetailPage>
-  <ix:DetailSection Title="Chart Definition" meta:resourcekey="DetailSection0" ResourceKey="DetailSection0">
+<ix:DetailPage ShowEditReadOnlyLink="True">
+  <ix:DetailPageMenuBar id="DetailPageMenuBar" runat="server">
+    <ix:EditReadOnlyActionLink Override="true" Visible="true" runat="server"/>
+  </ix:DetailPageMenuBar>
+  <ix:DetailSection Title="Chart Definition" runat="server" meta:resourcekey="DetailSection0" ResourceKey="DetailSection0">
     <ix:FieldArea span="true">
-<ix:Field For="Name"/>
-<ix:Field For="XMLDefinition"/>
-<ix:Field For="mxEditorURL"/>
+<ix:Field For="Name" runat="server"/>
+<ix:Field For="XMLDefinition" runat="server"/>
+<ix:Field For="mxEditorURL" EditReadOnly="True" ReadOnly="True" runat="server"/>
     </ix:FieldArea>
   </ix:DetailSection>
-  <ix:DetailSection Title="mxGraph" meta:resourcekey="DetailSection1" ResourceKey="DetailSection1">
+  <ix:DetailSection Title="mxGraph" runat="server" meta:resourcekey="DetailSection1" ResourceKey="DetailSection1">
 <div id="ITXmxGraphViewer" style="height:980px;"/>
   </ix:DetailSection>
 </ix:DetailPage>
 <ix:JavaScript Scope="OnReady">
   <script type="text/javascript">
-
-    // get configuration vars
+// get configuration vars
     var conf = config();
 
     function config() {
@@ -41,7 +43,9 @@
     
       // do not let user spoil xml
       if (conf.viewMode === 'Create' || conf.viewMode === 'Edit') {
-        $('#XMLDefinition').prop('readonly', true);
+        $('#XMLDefinition')
+          .prop('readonly', true)
+          .prop('style', 'background:#e6e8d0');
       }
       return conf;
     }
@@ -72,8 +76,6 @@
       *  and updates the xml textbox in the page
       *
       ********************************/
-      // TODO: Currently the xml is just being loaded into the textbox - IF AM wants to pursue version control -  make this an ajax post to the api instead of loading the directly into the field
-      // loads the xml definition only into the xml field
       e.preventDefault();
       if (e.origin !== conf.mxURL.origin) {  // <--change the origin here
         console.log('ERROR: Invalid sender');
