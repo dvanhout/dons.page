@@ -87,9 +87,7 @@ SAMPLE PAGE CODE BELOW -
   </ix:DetailSection>
   <ix:DetailSection Title="mxGraph" runat="server">
 
-
 <div id="ITXmxGraphViewer" style="height:980px;"/>
-
 
   </ix:DetailSection>
 </ix:DetailPage>
