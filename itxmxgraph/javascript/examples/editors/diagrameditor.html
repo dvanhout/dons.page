@@ -280,7 +280,8 @@
 
 			// INTELEX INTEGRATION CODE FROM HERE ---------------------------------------------->
 
-			const ITX_URL = "https://cloud3.intelex.com";  // <--- change to Intelex Server base URL
+			// const ITX_URL = "https://cloud3.intelex.com";  // <--- change to Intelex Server base URL
+			const ITX_URLS = process.env.ITX_URLS.split(',');
 
 			function getGraphXML() {
 				// extracts the xml of the graph
@@ -318,7 +319,8 @@
 			function receiveMessage(e) {
 				// receive message from Intelex					
 				// make sure sender is correct - i.e. fr Intelex
-				if (e.origin !== ITX_URL) { 
+				if ( !(ITX_URLS.includes(e.origin)) ) {
+				// if (e.origin !== ITX_URL) { 
 					return; 
 				} else { 
 				  // create graph
