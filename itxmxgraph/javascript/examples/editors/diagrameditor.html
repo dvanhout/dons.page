@@ -280,7 +280,6 @@
 
 			// INTELEX INTEGRATION CODE FROM HERE ---------------------------------------------->
 
-			// const ITX_URL = "https://cloud3.intelex.com";  // <--- change to Intelex Server base URL
 			const ITX_URLS = ["https://cloud3.intelex.com", "https://preprod-na.intelex.com"];
 
 			function getGraphXML() {
@@ -292,17 +291,15 @@
 			}
 
 			function makeGraph(xmlString) {
-				// creates a graph from the submitted xml
-				
+				// creates a graph from the submitted xml	
 				var doc = mxUtils.parseXml(xmlString);
-
 				var codec = new mxCodec(doc);
 				
 				codec.decode(doc.documentElement, editor.graph.getModel());
 			}
 
 			function enableViewMode(err) {
-				// hides editor, show's uneditable view of the diagram  
+				// hides editor, show's uneditable view of the diagram
 				// viewer iframe
 				var viewer = document.getElementById('viewer');
 
@@ -320,7 +317,6 @@
 				// receive message from Intelex					
 				// make sure sender is correct - i.e. fr Intelex
 				if ( !(ITX_URLS.includes(e.origin)) ) {
-				// if (e.origin !== ITX_URL) { 
 					return; 
 				} else { 
 				  // create graph
