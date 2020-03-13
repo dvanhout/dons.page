@@ -320,6 +320,8 @@
 					return; 
 				} else { 
 				  // create graph
+					console.log("xml --> " + e.data.itxXML);
+					console.log("Type of (xml) = " + typeof e.data.itxXML);
 					makeGraph(e.data.itxXML);
 
 					// two way communication - send changes back
