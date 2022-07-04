@@ -1,0 +1,64 @@
+.an-info {
+    color: red;
+ }
+ 
+ table {
+   border-collapse: collapse;
+   width: 80%;
+ }
+ 
+ thead {
+   text-align: left;
+   padding: 5px;
+ }
+ 
+ tr {
+   border-bottom: 1px solid #ddd;
+   padding: 5px;
+ }
+ /*
+ td {
+   width: 50%;
+ }
+ */
+
+ #response {
+    overflow: scroll;
+    max-height: 600px;
+ }
+ 
+ #fileUpload, #mFileUpload {
+    margin: 8px;
+ }
+
+ #csvMetaData {
+   padding: 20px;
+ }
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+	}
+
+  70% {
+		transform: scale(1);
+		box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		transform: scale(0.95);
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
+}
+
+ .load-pulse {
+	border-radius: 50%;
+	margin: 10px;
+	height: 20px;
+	width: 20px;
+
+	box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+	transform: scale(1);
+	animation: pulse 2s infinite;
+ }
